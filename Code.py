@@ -119,3 +119,112 @@ class Matrix:
     def row_add(self, i, j, x):
         self[j] = [e_j + x * e_i for e_i, e_j in zip(self[i], self[j])]
 
+    def _REF(self):
+        ref_matrix = self
+        rowA, colA = self.n, self.m
+
+        row, col = 0, 0  # i, j
+        all_zeroes = True
+        pivot_row = 0
+
+        while row < rowA and col < colA:
+            # Step 2: Find the pivot element
+            for k in range(row, rowA):
+                for l in range(col, colA):
+                    if ref_matrix[k][l] != 0:
+                        all_zeroes = False
+                        # Step 3: Update row and column indices
+                        col = l
+                        pivot_row = k
+                        break
+                if not all_zeroes:
+                    break
+            if all_zeroes:
+                break
+
+            # Step 4: Swap rows to bring the pivot element to the current row
+            ref_matrix.row_swap(row, pivot_row)
+
+            # Step 6: Perform row operations to make all elements below the pivot element zero
+            for k in range(rowA):
+                if k <= row:
+                    continue
+                ref_pivot_row_value = ref_matrix[k][col] / ref_matrix[row][col]
+                for i in range(colA):
+                    ref_result = ref_matrix[k][i] - ref_pivot_row_value * ref_matrix[pivot_row][i]
+                    ref_matrix[k][i] = ref_result
+
+            # Step 7: Move to the next row and column
+            row += 1
+            col += 1
+
+        return ref_matrix
+
+    def REF(self):
+        res = Matrix(self.to_list())
+        res._REF()
+        return res
+    
+    def rref_and_inverse(self):
+        rowA, colA = self.n, self.m
+
+        rref_matrix = self
+        inverse_matrix = Matrix(self.n, self.m, 1)
+        row, col = 0, 0  # i, j
+        all_zeroes = True
+
+        pivot_row = 0
+
+        while row < rowA and col < colA:
+            # Step 2: Find the pivot element
+            for k in range(row, rowA):
+                for l in range(col, colA):
+                    if A[k][l] != 0:
+                        all_zeroes = False
+                        # Step 3: Update row and column indices
+                        col = l
+                        pivot_row = k
+                        break
+                if not all_zeroes:
+                    break
+            if all_zeroes:
+                break
+
+            # Step 4: Swap rows to bring the pivot element to the current row
+            rref_matrix[row], rref_matrix[pivot_row] = rref_matrix[pivot_row], rref_matrix[row]
+            inverse_matrix[row], inverse_matrix[pivot_row] = inverse_matrix[pivot_row], inverse_matrix[row]
+
+            # Step 5: Normalize the pivot row
+            pivot_value = rref_matrix[row][col]
+            for i in range(rowA):
+                rref_matrix[row][i] /= pivot_value
+                inverse_matrix[row][i] /= pivot_value
+
+            # Step 6: Perform row operations to make all elements except the pivot zero
+            for k in range(rowA):
+                if k == row:
+                    continue
+                rref_pivot_row_value = rref_matrix[k][col]
+                for i in range(colA):
+                    rref_matrix[k][i] -= rref_pivot_row_value * rref_matrix[row][i]
+                    inverse_matrix[k][i] -= rref_pivot_row_value * inverse_matrix[row][i]
+
+            # Step 7: Move to the next row and column
+            row += 1
+            col += 1
+
+        return rref_matrix, inverse_matrix
+    
+    def RREF(self):
+        if self.n != self.m:
+            raise Exception("Incorrect dimensions")
+        res = Matrix(self.to_list())
+        result = res.rref_and_inverse()
+        return result[0]
+    
+    def inverse(self):
+        if self.n != self.m:
+            raise Exception("Incorrect dimensions")
+        res = Matrix(self.to_list())
+        result = res.rref_and_inverse()
+        return result[1]
