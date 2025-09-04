@@ -45,3 +45,77 @@ class Matrix:
         for l in self.mat: 
             print(l)
         print()
+    def __eq__(self, other):
+        if (self.n, self.m) != (other.n, other.m):
+            return False
+
+        for i in range(self.n):
+            for j in range(self.m):
+                if abs(self[i][j] - other[i][j]) > 1e-10:
+                    return False
+
+        return True
+
+    def __ne__(self, other):
+        return not self.mat == other.mat
+
+    def __add__(self, other):
+        if self.n != other.n or self.m != other.m:
+            raise Exception("Incorrect dimensions.")
+        result = Matrix(self.n, self.m)
+
+        for i in range(self.n):
+            for j in range(self.m):
+                result[i][j] = self[i][j] + other[i][j]
+
+        return result
+
+
+    def __sub__(self, other):
+        if self.n != other.n or self.m != other.m:
+            raise Exception("Incorrect dimensions.")
+        result = Matrix(self.n, self.m)
+
+        for i in range(self.n):
+            for j in range(self.m):
+                result[i][j] = self[i][j] - other[i][j]
+
+        return result
+
+
+    def __mul__(self, other):
+        if self.m != other.n:
+            raise Exception("Incorrect dimensions.")
+
+        result = Matrix(self.n, other.m)
+
+        for i in range(self.n):
+            for j in range(other.m):
+                for k in range(self.m):
+                    result[i][j] += self[i][k] * other[k][j]
+
+        return result
+
+    def transpose(self):
+        result = Matrix(self.m, self.n)
+
+        for i in range(self.n):
+            for j in range(self.m):
+                result[j][i] = self[i][j]
+
+        return result
+
+    def symmetry(self):
+        return self.mat == self.transpose().mat
+
+    def row_swap(self, i, j):
+        self[i], self[j] = self[j], self[i]
+
+    def row_multiply(self, i, x):
+        if x == 0:
+            raise Exception("Cannot multiply by 0")
+        self[i] = [x * e for e in self[i]]
+
+    def row_add(self, i, j, x):
+        self[j] = [e_j + x * e_i for e_i, e_j in zip(self[i], self[j])]
+
