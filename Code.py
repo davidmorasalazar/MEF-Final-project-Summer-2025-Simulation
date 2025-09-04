@@ -1,6 +1,7 @@
-cimport pandas as pd
-import matplotlib as plt
+import pandas as pd
+import matplotlib.pyplot as plt
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 class Matrix:
 
     def generate(self, n, m, x=0):
@@ -268,3 +269,26 @@ B.RREF().print() #Reduce matrices to REF (Row Echelon Form) and RREF (Reduced Ro
 B.print()
 B.inverse().print() # return an inverse from a copy of matrix B, B is unchanged
 B.print()
+
+points = B
+##Code lines to use pandas and matplotlib
+# Split into x, y, z coordinates
+x = [p[0] for p in points]
+y = [p[1] for p in points]
+z = [p[2] for p in points]
+
+# Create 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the points
+ax.scatter(x, y, z, c='r', marker='o', s=100)
+
+# Add labels
+ax.set_xlabel("X axis")
+ax.set_ylabel("Y axis")
+ax.set_zlabel("Z axis")
+ax.set_title("3D Points from Matrix")
+
+# Show plot
+plt.show()
